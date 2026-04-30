@@ -11,7 +11,7 @@
       },
       "hit-sounds": {
         "name": "Play sounds on hit",
-        "hint": "Requires Sequencer! Play sounds when target is hit by a ranged attack"
+        "hint": "Requires Sequencer! Play sounds when a target is hit by an attack"
       },
       "sound-select": {
         "name": "Select hit sounds",
@@ -43,6 +43,22 @@
         "name": "Check if poor quality weapons should jam",
         "hint": "Checks each attack roll if a poor quality weapon should jam or break. Do mind that quality of weapons is noted in their weapon name such as (Poor)! This is important for this to work!"
       },
+      "auto-dead-status": {
+        "name": "Automatically mark mortally wounded actors dead",
+        "hint": "When enabled, character and mook actors automatically receive Foundry's Dead status effect when they reach 0 HP and are mortally wounded."
+      },
+      "martial-arts-autoweapon": {
+        "name": "Enable martial arts autoweapons",
+        "hint": "When enabled, Martial Arts skills on characters and mooks automatically create matching martial arts weapon items, special move items, and a sheet panel."
+      },
+      "skip-npc-initiative-dice-so-nice": {
+        "name": "Skip Dice So Nice for NPC initiative",
+        "hint": "When enabled, Dice So Nice animations are skipped for NPC initiative rolls on this client."
+      },
+      "skip-npc-dice-so-nice": {
+        "name": "Skip Dice So Nice for all NPC rolls",
+        "hint": "When enabled, Dice So Nice animations are skipped for all NPC rolls on this client."
+      },
       "dfAmbientLights-enable": {
         "name": "Create Lights for muzzle flashes",
         "hint": "Requires the modules \"DF Active Lights\" and \"Automated Animations\". When Automated Animation plays a ranged attack animation it will simulate a muzzle flash by placing an ambient light source. It will clean the light up on its own."
@@ -62,6 +78,10 @@
       "hit": {
         "normal": "<b>{attacker} <span class=\"fg-green\">trifft</span> {target}</b> (SG: {dv}, {dv-diff} drüber)! Schaden wrfeln!",
         "evade": "<b>{attacker} <span class=\"fg-green\">übertrifft den Fernkampf-SG</span> </b>({dv}, {dv-diff} drüber)<b> und trifft {target}</b> um {dv-diff-1}! Schaden würfeln, wenn das Ziel nicht auszuweichen versucht ODER der Wurf den Ausweichen-Wurf übertrifft"
+      },
+      "melee": {
+        "hit": "<b>{attacker} <span class=\"fg-green\">hits</span> {target}</b> ({attack} vs Evasion {evasion}, {evasion-diff} over)! Roll Damage!",
+        "missed": "<b>{target} <span class=\"fg-red\">evades</span> {attacker}'s melee attack</b> by {evasion-diff+1} ({attack} vs Evasion {evasion})!"
       }
     },
     "dv-display": {

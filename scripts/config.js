@@ -156,6 +156,58 @@ export class Config {
       default: true,
     });
 
+    game.settings.register(Constants.MODULE_NAME, "autoDeadStatus", {
+      name: game.i18n.localize(
+        "diwako-cpred-additions.settings.auto-dead-status.name"
+      ),
+      hint: game.i18n.localize(
+        "diwako-cpred-additions.settings.auto-dead-status.hint"
+      ),
+      scope: "world",
+      config: true,
+      type: Boolean,
+      default: false,
+    });
+
+    game.settings.register(Constants.MODULE_NAME, "martialArtsAutoweapon", {
+      name: game.i18n.localize(
+        "diwako-cpred-additions.settings.martial-arts-autoweapon.name"
+      ),
+      hint: game.i18n.localize(
+        "diwako-cpred-additions.settings.martial-arts-autoweapon.hint"
+      ),
+      scope: "world",
+      config: true,
+      type: Boolean,
+      default: false,
+    });
+
+    game.settings.register(Constants.MODULE_NAME, "skipNpcInitiativeDiceSoNice", {
+      name: game.i18n.localize(
+        "diwako-cpred-additions.settings.skip-npc-initiative-dice-so-nice.name"
+      ),
+      hint: game.i18n.localize(
+        "diwako-cpred-additions.settings.skip-npc-initiative-dice-so-nice.hint"
+      ),
+      scope: "client",
+      config: true,
+      type: Boolean,
+      default: false,
+    });
+
+    game.settings.register(Constants.MODULE_NAME, "skipNpcDiceSoNice", {
+      name: game.i18n.localize(
+        "diwako-cpred-additions.settings.skip-npc-dice-so-nice.name"
+      ),
+      hint: game.i18n.localize(
+        "diwako-cpred-additions.settings.skip-npc-dice-so-nice.hint"
+      ),
+      scope: "client",
+      config: true,
+      type: Boolean,
+      default: false,
+    });
+
     console.log("diwako-cpred-additions settings end");
   }
 }

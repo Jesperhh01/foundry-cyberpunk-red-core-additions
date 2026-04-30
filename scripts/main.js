@@ -7,6 +7,10 @@ import { PoorWeaponCheck } from "./poorWeaponCheck.js";
 import { DFAmbientLightsAndAA } from "./dfAmbientLights.js";
 import { ItemPiles } from "./itemPiles.js";
 import { Template } from './template.js';
+import { AutoDeadStatus } from "./autoDeadStatus.js";
+import { MartialArtsAutoweapon } from "./martialArtsAutoweapon.js";
+import { DiceSoNiceNpcSkip } from "./diceSoNiceNpcSkip.js";
+import { CombatRollNpcs } from "./combatRollNpcs.js";
 
 console.log("diwako-cpred-additions start");
 Hooks.once("init", function () {
@@ -19,10 +23,14 @@ Hooks.once("init", function () {
   Token.prototype.showDVDisplay = DvDisplay.show;
   Token.prototype.clearDVDisplay = DvDisplay.clear;
 
-  Config.registerSettings();
-  DFAmbientLightsAndAA.initialize();
-  ItemPiles.initialize();
-});
+    Config.registerSettings();
+    DFAmbientLightsAndAA.initialize();
+    ItemPiles.initialize();
+    AutoDeadStatus.initialize();
+    MartialArtsAutoweapon.initialize();
+    DiceSoNiceNpcSkip.initialize();
+    CombatRollNpcs.initialize();
+  });
 
 Hooks.on("hoverToken", (token, hovered) => {
   if (hovered) {
@@ -36,6 +44,117 @@ Hooks.on("controlToken", (token, _) => {
   // prevent display of DV info when selecting current hovered token
   canvas.tokens.get(token.id)?.clearDVDisplay();
 });
+
+function getTargetActor(target) {
+  return target?.actor ?? target?.document?._actor ?? target?.document?.actor;
+}
+
+function normalizeSkillName(name) {
+  return `${name ?? ""}`.toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
+}
+
+function findEvasionSkill(actor) {
+  const evasionNames = [
+    "Evasion",
+    game.i18n.localize("CPR.global.itemType.skill.evasion"),
+  ].map(normalizeSkillName);
+  const skills = actor?.itemTypes?.skill ?? actor?.items?.filter((i) => i.type === "skill") ?? [];
+  return skills.find((skill) => evasionNames.includes(normalizeSkillName(skill.name)));
+}
+
+async function createEvasionRoll(actor, skill) {
+  if (!skill || typeof skill.createRoll !== "function") return null;
+  const cprRoll = skill.createRoll("skill", actor);
+  await cprRoll.roll();
+  return { total: cprRoll.resultTotal, roll: cprRoll };
+}
+
+async function renderEvasionRollMessage(evasionRoll, target, sourceMessage) {
+  const cprRoll = evasionRoll.roll;
+  const renderTemplateFn = foundry?.applications?.handlebars?.renderTemplate ?? globalThis.renderTemplate;
+  if (!cprRoll?.rollCard || !renderTemplateFn) return;
+
+  cprRoll.criticalCard = cprRoll.wasCritical?.() ?? false;
+  const html = await renderTemplateFn(cprRoll.rollCard, cprRoll);
+  await ChatMessage.create(
+    {
+      speaker: ChatMessage.getSpeaker({ token: target }),
+      content: html,
+      type: sourceMessage.type,
+      whisper: sourceMessage.whisper,
+    },
+    { chatBubble: false }
+  );
+}
+
+async function handleMeleeHitCheck(message, token, target, targetActor, attackRoll) {
+  const evasionSkill = findEvasionSkill(targetActor);
+  if (!targetActor || !evasionSkill) {
+    console.log(
+      `diwako-cpred-additions ===== Could not find Evasion skill for target ${target.document?.name}`
+    );
+    return;
+  }
+
+  const evasionRoll = await createEvasionRoll(targetActor, evasionSkill);
+  if (!evasionRoll) {
+    console.log(
+      `diwako-cpred-additions ===== Could not create Evasion roll for target ${target.document?.name}`
+    );
+    return;
+  }
+  await renderEvasionRollMessage(evasionRoll, target, message);
+
+  const messageReplaceMap = {
+    attacker: token.name,
+    target: target.document.name,
+    attack: attackRoll,
+    evasion: evasionRoll.total,
+    "evasion-diff": attackRoll - evasionRoll.total,
+    "evasion-diff+1": evasionRoll.total - attackRoll + 1,
+  };
+
+  let stringKey = "diwako-cpred-additions.message.melee.hit";
+  let backgroundColor = "var(--cpr-text-chat-success, #2d9f36)";
+  if (evasionRoll.total >= attackRoll) {
+    stringKey = "diwako-cpred-additions.message.melee.missed";
+    backgroundColor = "var(--cpr-text-chat-failure, #b90202ff)";
+    if (
+      window.Sequence &&
+      game.settings.get(Constants.MODULE_NAME, "hit-animations")
+    ) {
+      const filePath = game.settings.get(Constants.MODULE_NAME, "jb2a-patreon")
+        ? "modules/jb2a_patreon/Library/Generic/UI/Miss_01_Red_200x200.webm"
+        : "modules/JB2A_DnD5e/Library/Generic/UI/Miss_02_White_200x200.webm";
+
+      new Sequence()
+        .effect()
+        .delay(1000)
+        .file(filePath)
+        .snapToGrid()
+        .atLocation(token, {
+          gridUnits: true,
+          offset: { x: 0, y: -0.55 },
+        })
+        .scaleToObject(1.35)
+        .locally(message.whisper.length != 0)
+        .play();
+    }
+  }
+
+  ChatMessage.create(
+    {
+      speaker: message.speaker,
+      content: `<div class="cpr-block" style="padding:10px;background-color:${backgroundColor}">${game.i18n.format(
+        stringKey,
+        messageReplaceMap
+      )}</div>`,
+      type: message.type,
+      whisper: message.whisper,
+    },
+    { chatBubble: false }
+  );
+}
 
 // Check if an attack hits or not
 // Huge thanks to Zhell from the foundry discord for all the help
@@ -89,6 +208,13 @@ Hooks.on("createChatMessage", async function (message) {
     DIV.querySelector("span.clickable[data-action='toggleVisibility']")
       .innerHTML
   );
+  let targetActor = getTargetActor(target);
+
+  if (!item.system?.isRanged) {
+    await handleMeleeHitCheck(message, token, target, targetActor, attackRoll);
+    return;
+  }
+
   let dvTable = item.system?.dvTable;
   if (!dvTable || dvTable === "") {
     console.log(
@@ -118,7 +244,6 @@ Hooks.on("createChatMessage", async function (message) {
 
   let chatMessage = "";
   let backgroundColor = "var(--cpr-text-chat-failure, #b90202ff)";
-  let targetActor = target.document?._actor || target.document?.actor;
   if (dv >= attackRoll) {
     if (targetActor.system.stats.ref.value >= 8) {
       chatMessage = game.i18n.format(

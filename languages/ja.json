@@ -11,7 +11,7 @@
       },
       "hit-sounds": {
         "name": "ヒット時のサウンドを再生",
-        "hint": "Sequencer モジュールが必要です。遠隔攻撃がヒットした時のサウンドを再生します。"
+        "hint": "Sequencer モジュールが必要です。攻撃がヒットした時のサウンドを再生します。"
       },
       "sound-select": {
         "name": "ヒット時のサウンドを選択",
@@ -43,6 +43,22 @@
         "name": "低品質の武器の動作不良チェック",
         "hint": "低品質の武器が弾詰まりを起こしたりは壊れたりする可かどうかを攻撃ロールの際にチェックします。 武器名に (低品質) などが追加されている必要があります。"
       },
+      "auto-dead-status": {
+        "name": "Automatically mark mortally wounded actors dead",
+        "hint": "When enabled, character and mook actors automatically receive Foundry's Dead status effect when they reach 0 HP and are mortally wounded."
+      },
+      "martial-arts-autoweapon": {
+        "name": "Enable martial arts autoweapons",
+        "hint": "When enabled, Martial Arts skills on characters and mooks automatically create matching martial arts weapon items, special move items, and a sheet panel."
+      },
+      "skip-npc-initiative-dice-so-nice": {
+        "name": "Skip Dice So Nice for NPC initiative",
+        "hint": "When enabled, Dice So Nice animations are skipped for NPC initiative rolls on this client."
+      },
+      "skip-npc-dice-so-nice": {
+        "name": "Skip Dice So Nice for all NPC rolls",
+        "hint": "When enabled, Dice So Nice animations are skipped for all NPC rolls on this client."
+      },
       "dfAmbientLights-enable": {
         "name": "マズルフラッシュアニメーションを表示",
         "hint": "\"DF Active Lights\" モジュールと \"Automated Animations\" モジュールが必要です。Automated Animations モジュールで光源を周囲に配置することでマズルフラッシュを表現します。 光源は自動的に削除されます。"
@@ -62,6 +78,10 @@
       "hit": {
         "normal": "<b>{attacker}の{target}への攻撃は<span class=\"fg-green\">ヒット！</span></b>(難易度:{dv}, {dv-diff}オーバー！)<b>ダメージロールだ！</b>",
         "evade": "<b>{attacker}の{target}への攻撃は難易度を<span class=\"fg-green\">越えた！</span></b>(難易度:{dv}, {dv-diff}オーバー！)<b>相手が回避していないならダメージロールだ！</b>"
+      },
+      "melee": {
+        "hit": "<b>{attacker} <span class=\"fg-green\">hits</span> {target}</b> ({attack} vs Evasion {evasion}, {evasion-diff} over)! Roll Damage!",
+        "missed": "<b>{target} <span class=\"fg-red\">evades</span> {attacker}'s melee attack</b> by {evasion-diff+1} ({attack} vs Evasion {evasion})!"
       }
     },
     "dv-display": {
@@ -90,14 +110,14 @@
       "created-actor": "遮蔽トークン用のデフォルトアクターを作成: \"{actor-name}\"",
       "zero-hp-no-cover": "HPが0の場合は遮蔽として機能しませんが、視線を遮る障害物として使用される可能性があります。"
     },
-    "poor-weapon-check": {
-      "word-indicator": "(低品質)",
-      "jam-weapon": "Upon attacking with the weapon \"{weapon}\", it <b><span class=\"fg-red\">jams</span></b>!",
-      "break-weapon": "Upon attacking with the weapon \"{weapon}\", it <b><span class=\"fg-red\">breaks</span></b>, and is <b>not usable anymore</b>!",
-      "break-beyond-weapon": "Upon attacking with the weapon \"{weapon}\", it <b><span class=\"fg-red\">breaks beyond repair</span></b>, and is <b>not usable anymore</b>!",
-      "cointoss": "Upon attacking with the weapon \"{weapon}\", <b>a malfunction happens</b>. <b><span class=\"fg-red\">A coin must be tossed</span></b> to determine what happens! Check the rules of the weapon for details!"
-    },
-    "template": {
+      "poor-weapon-check": {
+        "word-indicator": "(低品質)",
+        "jam-weapon": "Upon attacking with the weapon \"{weapon}\", it <b><span class=\"fg-red\">jams</span></b>!",
+        "break-weapon": "Upon attacking with the weapon \"{weapon}\", it <b><span class=\"fg-red\">breaks</span></b>, and is <b>not usable anymore</b>!",
+        "break-beyond-weapon": "Upon attacking with the weapon \"{weapon}\", it <b><span class=\"fg-red\">breaks beyond repair</span></b>, and is <b>not usable anymore</b>!",
+        "cointoss": "Upon attacking with the weapon \"{weapon}\", <b>a malfunction happens</b>. <b><span class=\"fg-red\">A coin must be tossed</span></b> to determine what happens! Check the rules of the weapon for details!"
+      },
+      "template": {
       "portal-missing": "In order to use the template placement feature, the module \"Portal\" by \"theripper93\" is required! Please install and activate it."
     }
   }
