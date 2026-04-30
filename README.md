@@ -10,11 +10,11 @@ A small module to add some more features to the Cyberpunk Red - Core system unti
 
 ### "Does it hit?"
 
-A small feature to check if a ranged attack hits its mark. It outputs a chat message, with color codes, and with extra information about the attack. Useful if you need to know how much your shot was off, or how much it is over the DV (useful for autofire).
+A small feature to check if an attack hits its mark. Ranged attacks are checked against their range DV. Melee attacks automatically roll the targeted opponent's Evasion skill and compare the attack roll against that opposed roll. It outputs a chat message, with color codes, and with extra information about the attack. Useful if you need to know how much your shot was off, how much it is over the DV (useful for autofire), or whether a melee defender evaded the blow.
 
 It takes the REF value into account of the target. Meaning it will remind everyone the target can dodge bullets.
 
-Make sure to tell your players and yourself to target the token you want to attack!
+Make sure to tell your players and yourself to target the token you want to attack. Melee Evasion automation requires the targeted actor to have an Evasion skill item.
 
 ![Does it hit example](images/does-it-hit.png)
 
@@ -22,7 +22,7 @@ Make sure to tell your players and yourself to target the token you want to atta
 
 **REQUIRES THE [SEQUENCER MODULE](https://github.com/fantasycalendar/FoundryVTT-Sequencer)**
 
-For some reason my players wanted funny sounds when a token manages to hit another in ranged combat. So that option was added.
+For some reason my players wanted funny sounds when a token manages to hit another in combat. So that option was added.
 
 ### Hit and miss animations
 
@@ -56,6 +56,18 @@ The feature can be turned off by the GM, it is default enabled.
 
 **Make sure poor quality weapons have been configured as such, alternatively add the identifier `(Poor)` or language equivalent in its item name!**
 
+### Auto Dead Status
+
+When enabled, character and mook actors automatically receive Foundry's Dead status effect when they reach 0 HP and their Cyberpunk RED wound state is Mortally Wounded.
+
+This is disabled by default and can be enabled in the module settings.
+
+### Martial Arts Autoweapons
+
+When enabled, character and mook Martial Arts skills automatically create matching Martial Arts weapon items wired to the exact style skill. The feature also grants the matching special move weapon items.
+
+This is disabled by default and can be enabled in the module settings. It replaces the standalone CPR Martial Arts Autoweapon module functionality, so do not enable both modules at the same time.
+
 ### Item Piles Module features
 
 [Items Piles](https://github.com/fantasycalendar/FoundryVTT-ItemPiles/) is great, I fully recommend that module, sadly it can break character sheets if you drop, store, or sell an upgraded item using an Item Piles functionality.
@@ -79,4 +91,4 @@ The CPRED - Core system does not provide speaker data on chat messages for playe
 
 Custom DV tables are supported. It will first use imported rolltables of matching names, then try to get rolltables from the set DV compendium of the system. These values will be cached, when making changes to them you will need to reload your browser window.
 
-DV Display and "Does it hit" can only work if a weapon has a DV table configured.
+DV Display can only work if a weapon has a DV table configured. Ranged "Does it hit" checks also need a DV table; melee "Does it hit" checks need the target to have an Evasion skill item.
